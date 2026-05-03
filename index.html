@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartSave 💰</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+    transition: 0.4s;
+}
+
+/* THEMES */
+.pink {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+}
+
+.blue {
+    background: linear-gradient(135deg, #89f7fe, #66a6ff);
+}
+
+.dark {
+    background: #121212;
+    color: white;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.card {
+    width: 100%;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 15px 0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.dark .card {
+    background: #1e1e1e;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #ff6f91;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* ICONS */
+.food::before { content: "🍔 "; }
+.travel::before { content: "🚗 "; }
+.study::before { content: "📚 "; }
+.entertainment::before { content: "🎮 "; }
+
+</style>
+</head>
+
+<body class="pink">
+
+<div class="container">
+
+<h1>SmartSave 💰</h1>
+
+<!-- THEME SWITCH -->
+<select onchange="changeTheme(this.value)">
+  <option value="pink">🌸 Pink</option>
+  <option value="blue">💙 Blue</option>
+  <option value="dark">🌙 Dark</option>
+</select>
+
+<!-- BALANCE -->
+<div class="card">
+  <h3>Balance: ₹<span id="balance">0</span></h3>
+  <p>Income: ₹<span id="income">0</span></p>
+  <p>Expense: ₹<span id="expense">0</span></p>
+</div>
+
+<!-- MONTHLY SUMMARY -->
+<div class="card">
+  <h3>📅 Monthly Summary</h3>
+  <p>Income: ₹<span id="monthIncome">0</span></p>
+  <p>Expense: ₹<span id="monthExpense">0</span></p>
+</div>
+
+<!-- ADD -->
+<div class="card">
+  <input id="desc" placeholder="Description">
+  <input id="amount" type="number" placeholder="Amount">
+  
+  <select id="type">
+    <option value="income">Income</option>
+    <option value="expense">Expense</option>
+  </select>
+
+  <select id="category">
+    <option value="food">🍔 Food</option>
+    <option value="travel">🚗 Travel</option>
+    <option value="study">📚 Study</option>
+    <option value="entertainment">🎮 Fun</option>
+  </select>
+
+  <button onclick="saveTransaction()">Save</button>
+</div>
+
+<!-- SEARCH & FILTER -->
+<div class="card">
+  <input id="search" placeholder="🔍 Search..." onkeyup="updateUI()">
+  
+  <select id="filter" onchange="updateUI()">
+    <option value="all">All</option>
+    <option value="income">Income</option>
+    <option value="expense">Expense</option>
+  </select>
+</div>
+
+<!-- LIST -->
+<div class="card">
+  <div id="list" class="list"></div>
+</div>
+
+</div>
+
+<script>
+let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+let editIndex = -1;
+
+function saveTransaction() {
+  let desc = descEl.value;
+  let amount = +amountEl.value;
+  let type = typeEl.value;
+  let category = categoryEl.value;
+
+  if (!desc || !amount) return;
+
+  let data = { desc, amount, type, category, date: new Date() };
+
+  if (editIndex === -1) transactions.push(data);
+  else {
+    transactions[editIndex] = data;
+    editIndex = -1;
+  }
+
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+  descEl.value = "";
+  amountEl.value = "";
+  updateUI();
+}
+
+function updateUI() {
+  let balance = 0, income = 0, expense = 0;
+  let mIncome = 0, mExpense = 0;
+
+  let list = listEl;
+  list.innerHTML = "";
+
+  let search = searchEl.value.toLowerCase();
+  let filter = filterEl.value;
+
+  let now = new Date();
+
+  transactions.forEach((t, i) => {
+    let match = t.desc.toLowerCase().includes(search);
+    let typeMatch = filter === "all" || t.type === filter;
+
+    if (!match || !typeMatch) return;
+
+    let div = document.createElement("div");
+    div.className = "item " + t.category;
+    div.innerHTML = `
+      <span>${t.desc} - ₹${t.amount}</span>
+      <div>
+        <button onclick="editTx(${i})">✏️</button>
+        <button onclick="deleteTx(${i})">❌</button>
+      </div>
+    `;
+    list.appendChild(div);
+
+    if (t.type === "income") {
+      income += t.amount;
+      balance += t.amount;
+    } else {
+      expense += t.amount;
+      balance -= t.amount;
+    }
+
+    let d = new Date(t.date);
+    if (d.getMonth() === now.getMonth()) {
+      if (t.type === "income") mIncome += t.amount;
+      else mExpense += t.amount;
+    }
+  });
+
+  balanceEl.innerText = balance;
+  incomeEl.innerText = income;
+  expenseEl.innerText = expense;
+  monthIncomeEl.innerText = mIncome;
+  monthExpenseEl.innerText = mExpense;
+}
+
+function editTx(i) {
+  let t = transactions[i];
+  descEl.value = t.desc;
+  amountEl.value = t.amount;
+  typeEl.value = t.type;
+  categoryEl.value = t.category;
+  editIndex = i;
+}
+
+function deleteTx(i) {
+  transactions.splice(i, 1);
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+  updateUI();
+}
+
+function changeTheme(theme) {
+  document.body.className = theme;
+}
+
+let descEl = document.getElementById("desc");
+let amountEl = document.getElementById("amount");
+let typeEl = document.getElementById("type");
+let categoryEl = document.getElementById("category");
+let listEl = document.getElementById("list");
+let searchEl = document.getElementById("search");
+let filterEl = document.getElementById("filter");
+
+let balanceEl = document.getElementById("balance");
+let incomeEl = document.getElementById("income");
+let expenseEl = document.getElementById("expense");
+let monthIncomeEl = document.getElementById("monthIncome");
+let monthExpenseEl = document.getElementById("monthExpense");
+
+updateUI();
+</script>
+
+</body>
+</html> 
