@@ -4,44 +4,331 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FLOWBALANCE</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
-body{background:radial-gradient(circle at top right,#312e81,#020617 45%,#000);color:#fff;min-height:100vh;padding:18px}
-.app{max-width:1280px;margin:auto}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:10px;flex-wrap:wrap}
-.logo{font-size:2.7rem;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,#67e8f9,#a78bfa,#f472b6);-webkit-background-clip:text;color:transparent}
-.tag{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);backdrop-filter:blur(10px)}
-.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:20px}
-.left,.right{display:grid;gap:20px}
-.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(14px);border-radius:26px;padding:22px;box-shadow:0 15px 35px rgba(0,0,0,.35);transition:.35s ease}
-.card:hover{transform:translateY(-4px);border-color:rgba(103,232,249,.25)}
-.card h2{font-size:1.15rem;margin-bottom:12px;color:#c4b5fd}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px}
-.stat{padding:14px;border-radius:18px;background:rgba(255,255,255,.05)}
-.stat p{font-size:.8rem;color:#94a3b8}.stat h3{margin-top:6px;font-size:1.4rem}
-input,select,button{width:100%;padding:13px 14px;border:none;border-radius:14px;margin-top:10px;font-size:.96rem}
-input,select{background:#0f172a;color:#fff;border:1px solid #334155}
-button{background:linear-gradient(90deg,#06b6d4,#8b5cf6);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(139,92,246,.35)}
-button:hover{transform:translateY(-2px)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-ul{list-style:none;max-height:380px;overflow:auto;padding-right:6px}
-li{background:#111827;border:1px solid #1f2937;padding:14px;border-radius:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;animation:fade .4s}
-.actions{display:flex;gap:8px}.actions button{width:auto;padding:8px 12px;font-size:.8rem;margin-top:0}.edit-btn{background:#f59e0b}.delete-btn{background:#ef4444}
-@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Inter,system-ui,sans-serif
+}
+
+body{
+  background:radial-gradient(circle at top right,#312e81,#020617 45%,#000);
+  color:#fff;
+  min-height:100vh;
+  padding:18px;
+}
+
+.app{
+  max-width:1280px;
+  margin:auto;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.logo{
+  font-size:2.7rem;
+  font-weight:800;
+  letter-spacing:2px;
+  background:linear-gradient(90deg,#67e8f9,#a78bfa,#f472b6);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.tag{
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1.25fr;
+  gap:18px;
+  align-items:start;
+}
+.right{
+  display:grid;
+  gap:14px;
+  width:100%;
+}
+.right .card{
+  height:fit-content;
+}
+
+.card{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(14px);
+  border-radius:26px;
+  padding:16px;
+  box-shadow:0 15px 35px rgba(0,0,0,.35);
+  transition:.35s ease;
+  margin-bottom:0;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(103,232,249,.25);
+}
+
+.card h2{
+  font-size:1.15rem;
+  margin-bottom:12px;
+  color:#c4b5fd;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.stat{
+  padding:18px;
+  border-radius:20px;
+  background:rgba(255,255,255,.05);
+}
+
+.stat p{
+  font-size:.8rem;
+  color:#94a3b8;
+}
+
+.stat h3{
+  margin-top:6px;
+  font-size:1.35rem;
+}
+input,
+select,
+button{
+  width:100%;
+  padding:13px 14px;
+  border:none;
+  border-radius:14px;
+  margin-top:10px;
+  font-size:.96rem;
+}
+
+input,
+select{
+  background:#0f172a;
+  color:#fff;
+  border:1px solid #334155;
+}
+
+button{
+  background:linear-gradient(90deg,#06b6d4,#8b5cf6);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(139,92,246,.35);
+  transition:.3s;
+}
+
+button:hover{
+  transform:translateY(-2px);
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+ul{
+  list-style:none;
+  max-height:380px;
+  overflow:auto;
+  padding-right:6px;
+}
+
+li{
+  background:#111827;
+  border:1px solid #1f2937;
+  padding:14px;
+  border-radius:16px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  animation:fade .4s;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.actions button{
+  width:auto;
+  padding:8px 12px;
+  font-size:.8rem;
+  margin-top:0;
+}
+
+.edit-btn{
+  background:#f59e0b;
+}
+
+.delete-btn{
+  background:#ef4444;
+}
+
+@keyframes fade{
+  from{
+    opacity:0;
+    transform:translateY(14px)
+  }
+  to{
+    opacity:1;
+    transform:translateY(0)
+  }
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media (max-width: 900px){
+
+  body{
+    padding:10px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+  .left,
+  .right{
+    width:100%;
+  }
+
+  .card{
+    padding:14px;
+    border-radius:20px;
+  }
+
+  .logo{
+    font-size:2rem;
+    text-align:center;
+    width:100%;
+  }
+
+  .header{
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+  }
+
+  .tag{
+    width:100%;
+    text-align:center;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .stat{
+    padding:14px;
+  }
+
+  .stat h3{
+    font-size:1.2rem;
+  }
+
+  .row{
+    grid-template-columns:1fr;
+  }
+
+  input,
+  select,
+  button{
+    font-size:.95rem;
+    padding:12px;
+  }
+
+  ul{
+    max-height:none;
+  }
+
+  li{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .actions{
+    width:100%;
+    display:flex;
+    gap:8px;
+  }
+
+  .actions button{
+    flex:1;
+  }
+
+  canvas{
+    width:100% !important;
+    height:auto !important;
+  }
+
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 500px){
+
+  .logo{
+    font-size:1.6rem;
+  }
+
+  .card h2{
+    font-size:1rem;
+  }
+
+  .stat h3{
+    font-size:1rem;
+  }
+
+  .stat p{
+    font-size:.75rem;
+  }
+
+  button{
+    border-radius:12px;
+  }
+
+}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="header"><div class="logo">FLOWBALANCE</div><div class="tag">Smart Finance Tracker</div></div>
+<div class="header"><div class="logo">FLOWBALANCE</div>
+<div class="tag">Smart Finance Tracker</div>
+</div>
 <div class="grid">
 <div class="left">
 <div class="card">
 
 <h2>Quick Add Transaction</h2>
 
-<input id="quickInput" placeholder="Example: 500 food lunch">
+<input id="quickInput" placeholder="Quick Add Transaction">
 <div class="row">
    <input id="amount" type="number" placeholder="Amount">
    <select id="type"><option>Expense</option>
@@ -55,8 +342,7 @@ li{background:#111827;border:1px solid #1f2937;padding:14px;border-radius:16px;m
 <input id="newCategory" placeholder="Create custom category">
 <button onclick="addCategory()">Add Category</button>
 <button onclick="editCategory()">Edit Selected Category</button>
-<button onclick="deleteCategory()" style="background:#ef4444;">Delete Category</button>
-</div>
+<button onclick="deleteCategory()" style="background:#ef4444;margin-bottom:0;">Delete Category</button></div>
 <div class="card"><h2>Recent Transactions</h2>
    <input id="search" placeholder="Search..." oninput="renderTransactions()"><ul id="transactionList"></ul></div>
 </div>
@@ -72,8 +358,11 @@ li{background:#111827;border:1px solid #1f2937;padding:14px;border-radius:16px;m
   <div class="stat"><p>This Month Income</p><h3 id="monthIncome">₹0</h3></div>
   <div class="stat"><p>This Month Expense</p><h3 id="monthExpense">₹0</h3></div>
   <div class="stat"><p>This Month Savings</p><h3 id="monthSavings">₹0</h3></div>
+  <div class="stat"><p>This Year Income</p><h3 id="monthIncome">₹0</h3></div>
+  <div class="stat"><p>This Year Expense</p><h3 id="monthExpense">₹0</h3></div>
+  <div class="stat"><p>This Year Savings</p><h3 id="monthSavings">₹0</h3></div>
 </div>
-<canvas id="chart"></canvas></div>
+</div>
 
 </div>
 </div>
@@ -81,14 +370,17 @@ li{background:#111827;border:1px solid #1f2937;padding:14px;border-radius:16px;m
 <script>
 let categories = JSON.parse(localStorage.getItem('fb_categories')) || ['Food','Transport','Bills','Shopping','Salary','Uncategorized']; let transactions = JSON.parse(localStorage.getItem('fb_transactions')) || [];
 let editIndex = null; let chart;
-function loadCategories(){const c=document.getElementById('category'); c.innerHTML=''; categories.forEach(x=>c.innerHTML += `<option>${x}</option>`); localStorage.setItem('fb_categories',JSON.stringify(categories));}
+function loadCategories(){const c=document.getElementById('category'); c.innerHTML=''; 
+categories.forEach(x=>c.innerHTML += `<option>${x}</option>`);
+ localStorage.setItem('fb_categories',JSON.stringify(categories));}
 
 function addCategory(){const v=newCategory.value.trim(); 
   if(v&&!categories.includes(v)){categories.push(v); 
     loadCategories(); newCategory.value='';}}
 quickInput.addEventListener('input', function () {
   const p = this.value.trim().split(' ');
-if(p.length>=2){amount.value=p[0]; category.value=(p[1].charAt(0).toUpperCase()+p[1].slice(1).toLowerCase());
+if(p.length>=2){amount.value=p[0]; 
+  category.value=(p[1].charAt(0).toUpperCase()+p[1].slice(1).toLowerCase());
    note.value=p.slice(2).join(' ');}});
    
    function editCategory() {
@@ -109,7 +401,6 @@ if(p.length>=2){amount.value=p[0]; category.value=(p[1].charAt(0).toUpperCase()+
     }
     return t;
   });
-
   localStorage.setItem('fb_categories', JSON.stringify(categories));
   localStorage.setItem('fb_transactions', JSON.stringify(transactions));
 
@@ -118,7 +409,7 @@ if(p.length>=2){amount.value=p[0]; category.value=(p[1].charAt(0).toUpperCase()+
 }
 function deleteCategory() {
   const selected = category.value;
-
+   category.value = categories[0];
   // prevent deleting if only one category left
   if (categories.length === 1) {
     alert("At least one category must remain.");
@@ -152,10 +443,34 @@ function deleteCategory() {
   renderTransactions();
 }
 
-function saveTransaction(){const data={amount:+amount.value,type:type.value,category:category.value,note:note.value,date:new Date().toLocaleDateString()}; 
-if(!data.amount)return; if(editIndex!==null){transactions[editIndex]=data; editIndex=null;}
- else transactions.unshift(data);
-  localStorage.setItem('fb_transactions',JSON.stringify(transactions)); quickInput.value=''; amount.value=''; note.value=''; renderTransactions();}
+function saveTransaction() {
+  const data = {
+    amount: +amount.value,
+    type: type.value,
+    category: category.value,
+    note: note.value,
+    date: new Date().toLocaleString() // better readable local date
+  };
+
+  if (!data.amount) return;
+
+  if (editIndex !== null) {
+    // keep old date when editing
+    data.date = transactions[editIndex].date;
+    transactions[editIndex] = data;
+    editIndex = null;
+  } else {
+    transactions.unshift(data);
+  }
+
+  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+
+  quickInput.value = '';
+  amount.value = '';
+  note.value = '';
+
+  renderTransactions();
+}
 
 function editTransaction(i){const t=transactions[i]; amount.value=t.amount; type.value=t.type; category.value=t.category;
    note.value=t.note; editIndex=i; scrollTo({top:0,behavior:'smooth'});}
@@ -163,7 +478,8 @@ function editTransaction(i){const t=transactions[i]; amount.value=t.amount; type
 function deleteTransaction(i){transactions.splice(i,1);
    localStorage.setItem('fb_transactions',JSON.stringify(transactions)); renderTransactions();}
 
-function renderTransactions(){const s=search.value.toLowerCase();
+function renderTransactions()
+{const s=search.value.toLowerCase();
    transactionList.innerHTML='';
     let income = 0, expense = 0;
 let monthIncome = 0, monthExpense = 0;
@@ -176,6 +492,7 @@ transactions
    obj.t.type === 'Income' ? income += obj.t.amount : expense += obj.t.amount;
 
 const txDate = new Date(obj.t.date);
+if (isNaN(txDate)) return;
 if (txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear) {
   obj.t.type === 'Income'
     ? monthIncome += obj.t.amount
@@ -188,11 +505,10 @@ expenseVal.textContent = '₹' + expense;
 monthIncome.textContent = '₹' + monthIncome;
 monthExpense.textContent = '₹' + monthExpense;
 monthSavings.textContent = '₹' + (monthIncome - monthExpense);
-  drawChart(income,expense);}
+ }
 
-function drawChart(income,expense){if(chart) chart.destroy();
-   chart = new Chart(document.getElementById('chart'), {type:'doughnut', data:{labels:['Income','Expense'], datasets:[{data:[income,expense], borderWidth:0}]}, options:{plugins:{legend:{labels:{color:'white'}}}, cutout:'72%', animation:{duration:1400}}});}
-loadCategories(); renderTransactions();
+loadCategories();
+ renderTransactions();
 </script>
 </body>
 </html>
