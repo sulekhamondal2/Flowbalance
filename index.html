@@ -1,515 +1,1784 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FLOWBALANCE</title>
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Inter,system-ui,sans-serif
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Tic-Tac-Toe · Cartoon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* ───────────────────────────── RESET & BASE ───────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body{
-  background:radial-gradient(circle at top right,#312e81,#020617 45%,#000);
-  color:#fff;
-  min-height:100vh;
-  padding:18px;
-}
+        body {
+            font-family: 'Comic Neue', cursive;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f9e3b3, #ffd6a5, #fdffb8);
+            background-attachment: fixed;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            padding: 12px;
+        }
 
-.app{
-  max-width:1280px;
-  margin:auto;
-}
+        /* ───────────────────────────── ANIMATED BG ───────────────────────────── */
+        .bg-decor {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .bg-decor span {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.15;
+            animation: floatDecor linear infinite;
+        }
+        .bg-decor span:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+        .bg-decor span:nth-child(2) {
+            top: 20%;
+            right: 8%;
+            animation-duration: 30s;
+            animation-delay: 3s;
+        }
+        .bg-decor span:nth-child(3) {
+            bottom: 25%;
+            left: 10%;
+            animation-duration: 28s;
+            animation-delay: 5s;
+        }
+        .bg-decor span:nth-child(4) {
+            bottom: 15%;
+            right: 5%;
+            animation-duration: 32s;
+            animation-delay: 2s;
+        }
+        .bg-decor span:nth-child(5) {
+            top: 50%;
+            left: 50%;
+            animation-duration: 35s;
+            animation-delay: 7s;
+        }
+        .bg-decor span:nth-child(6) {
+            top: 5%;
+            left: 45%;
+            animation-duration: 27s;
+            animation-delay: 4s;
+        }
+        .bg-decor span:nth-child(7) {
+            bottom: 5%;
+            left: 30%;
+            animation-duration: 29s;
+            animation-delay: 6s;
+        }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:22px;
-  gap:10px;
-  flex-wrap:wrap;
-}
+        @keyframes floatDecor {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(30px, -40px) rotate(15deg) scale(1.1);
+            }
+            50% {
+                transform: translate(-20px, -60px) rotate(-10deg) scale(0.9);
+            }
+            75% {
+                transform: translate(40px, -20px) rotate(20deg) scale(1.05);
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+        }
 
-.logo{
-  font-size:2.7rem;
-  font-weight:800;
-  letter-spacing:2px;
-  background:linear-gradient(90deg,#67e8f9,#a78bfa,#f472b6);
-  -webkit-background-clip:text;
-  color:transparent;
-}
+        /* ───────────────────────────── APP CONTAINER ───────────────────────────── */
+        #app {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 540px;
+        }
 
-.tag{
-  padding:8px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(10px);
-}
+        /* ───────────────────────────── CARTOON CARD ───────────────────────────── */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 60px 60px 60px 60px;
+            padding: 32px 24px;
+            border: 4px solid #ffb347;
+            box-shadow: 0 12px 0 #cc7a2a, 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 68px;
+            border: 4px dashed rgba(255, 180, 50, 0.3);
+            pointer-events: none;
+        }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1.25fr;
-  gap:18px;
-  align-items:start;
-}
-.right{
-  display:grid;
-  gap:14px;
-  width:100%;
-}
-.right .card{
-  height:fit-content;
-}
+        /* ───────────────────────────── PAGES ───────────────────────────── */
+        .page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .page.active {
+            display: flex;
+        }
 
-.card{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  backdrop-filter:blur(14px);
-  border-radius:26px;
-  padding:16px;
-  box-shadow:0 15px 35px rgba(0,0,0,.35);
-  transition:.35s ease;
-  margin-bottom:0;
-}
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-5deg);
+            }
+            60% {
+                transform: scale(1.05) rotate(1deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
 
-.card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(103,232,249,.25);
-}
+        /* ───────────────────────────── LANDING PAGE ───────────────────────────── */
+        #landing .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 68px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
-.card h2{
-  font-size:1.15rem;
-  margin-bottom:12px;
-  color:#c4b5fd;
-}
+        #landing .subtitle {
+            font-family: 'Fredoka One', cursive;
+            color: #ff6b6b;
+            font-size: 18px;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 0 #cc5555;
+            margin-bottom: 12px;
+        }
+        #landing .tagline {
+            color: #5f3b1a;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+            line-height: 1.5;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 6px 18px;
+            border-radius: 40px;
+            display: inline-block;
+        }
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin-bottom:14px;
-}
+        /* ───────────────────────────── BUTTONS (cartoon style) ───────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 24px;
+            border: 4px solid #333;
+            border-radius: 60px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            width: 100%;
+            position: relative;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            box-shadow: 0 8px 0 #1a1a1a;
+            touch-action: manipulation;
+            min-height: 56px;
+            background: #f39c12;
+            text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #1a1a1a;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 0 #1a1a1a;
+        }
 
-.stat{
-  padding:18px;
-  border-radius:20px;
-  background:rgba(255,255,255,.05);
-}
+        .btn-primary {
+            background: #ff6b6b;
+            border-color: #c0392b;
+            box-shadow: 0 8px 0 #c0392b;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 10px 0 #c0392b;
+        }
+        .btn-primary:active {
+            box-shadow: 0 4px 0 #c0392b;
+        }
 
-.stat p{
-  font-size:.8rem;
-  color:#94a3b8;
-}
+        .btn-secondary {
+            background: #48dbfb;
+            border-color: #0984e3;
+            box-shadow: 0 8px 0 #0984e3;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 10px 0 #0984e3;
+        }
+        .btn-secondary:active {
+            box-shadow: 0 4px 0 #0984e3;
+        }
 
-.stat h3{
-  margin-top:6px;
-  font-size:1.35rem;
-}
-input,
-select,
-button{
-  width:100%;
-  padding:13px 14px;
-  border:none;
-  border-radius:14px;
-  margin-top:10px;
-  font-size:.96rem;
-}
+        .btn-success {
+            background: #2ecc71;
+            border-color: #27ae60;
+            box-shadow: 0 8px 0 #27ae60;
+        }
+        .btn-success:hover {
+            box-shadow: 0 10px 0 #27ae60;
+        }
+        .btn-success:active {
+            box-shadow: 0 4px 0 #27ae60;
+        }
 
-input,
-select{
-  background:#0f172a;
-  color:#fff;
-  border:1px solid #334155;
-}
+        .btn-warning {
+            background: #feca57;
+            border-color: #f39c12;
+            box-shadow: 0 8px 0 #f39c12;
+            color: #333;
+        }
+        .btn-warning:hover {
+            box-shadow: 0 10px 0 #f39c12;
+        }
+        .btn-warning:active {
+            box-shadow: 0 4px 0 #f39c12;
+        }
 
-button{
-  background:linear-gradient(90deg,#06b6d4,#8b5cf6);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 8px 20px rgba(139,92,246,.35);
-  transition:.3s;
-}
+        .btn-outline {
+            background: transparent;
+            border-color: #333;
+            box-shadow: 0 8px 0 #333;
+            color: #333;
+            text-shadow: none;
+        }
+        .btn-outline:hover {
+            background: rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 0 #333;
+        }
+        .btn-outline:active {
+            box-shadow: 0 4px 0 #333;
+        }
 
-button:hover{
-  transform:translateY(-2px);
-}
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 14px;
+            min-height: 44px;
+        }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
+        /* ───────────────────────────── MODE SELECTION ───────────────────────────── */
+        #mode-selection {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+            animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        #mode-selection.show {
+            display: flex;
+        }
 
-ul{
-  list-style:none;
-  max-height:380px;
-  overflow:auto;
-  padding-right:6px;
-}
+        .mode-btn {
+            padding: 16px 20px;
+            border-radius: 40px;
+            border: 4px solid #333;
+            background: rgba(255, 255, 255, 0.6);
+            color: #333;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-align: left;
+            min-height: 64px;
+            box-shadow: 0 6px 0 #333;
+            touch-action: manipulation;
+        }
+        .mode-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #333;
+        }
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #333;
+        }
+        .mode-btn .icon {
+            font-size: 30px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            flex-shrink: 0;
+            border: 2px solid #333;
+        }
+        .mode-btn .label {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .mode-btn .label small {
+            font-weight: 400;
+            font-size: 13px;
+            color: #555;
+            font-family: 'Comic Neue', cursive;
+        }
 
-li{
-  background:#111827;
-  border:1px solid #1f2937;
-  padding:14px;
-  border-radius:16px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  animation:fade .4s;
-}
+        /* ───────────────────────────── NAME ENTRY PAGE ───────────────────────────── */
+        #name-entry .name-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 0 #ddd;
+        }
+        #name-entry .name-sub {
+            color: #555;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .name-group {
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        .name-group label {
+            display: block;
+            color: #333;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .name-group .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 40px;
+            border: 4px solid #333;
+            transition: border 0.3s ease;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .name-group .input-wrap:focus-within {
+            border-color: #f39c12;
+        }
+        .name-group .input-wrap .mark-icon {
+            padding: 0 10px 0 16px;
+            font-size: 24px;
+            font-weight: 800;
+            opacity: 0.8;
+        }
+        .name-group .input-wrap .mark-icon.x {
+            color: #ff6b6b;
+        }
+        .name-group .input-wrap .mark-icon.o {
+            color: #48dbfb;
+        }
+        .name-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 14px 14px 14px 2px;
+            color: #333;
+            font-family: 'Comic Neue', cursive;
+            font-size: 18px;
+            font-weight: 700;
+            outline: none;
+            min-width: 0;
+            height: 50px;
+            touch-action: manipulation;
+        }
+        .name-group input::placeholder {
+            color: #aaa;
+            font-weight: 400;
+        }
+        .name-error {
+            color: #ff6b6b;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 4px;
+            min-height: 20px;
+        }
+        .name-actions {
+            width: 100%;
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .name-actions .btn {
+            flex: 1;
+        }
 
-.actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
+        /* ───────────────────────────── DIFFICULTY SELECTION ───────────────────────────── */
+        #difficulty-page .diff-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 0 #ddd;
+        }
+        #difficulty-page .diff-sub {
+            color: #555;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .diff-options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .diff-btn {
+            padding: 16px 20px;
+            border-radius: 40px;
+            border: 4px solid #333;
+            background: #fff;
+            color: #333;
+            font-family: 'Fredoka One', cursive;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 0 #333;
+            touch-action: manipulation;
+        }
+        .diff-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #333;
+        }
+        .diff-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #333;
+        }
+        .diff-btn .stars {
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+        .diff-btn.easy {
+            background: #ffeaa7;
+        }
+        .diff-btn.medium {
+            background: #fdcb6e;
+        }
+        .diff-btn.hard {
+            background: #ff7675;
+            color: #fff;
+        }
+        .diff-back {
+            margin-top: 16px;
+        }
 
-.actions button{
-  width:auto;
-  padding:8px 12px;
-  font-size:.8rem;
-  margin-top:0;
-}
+        /* ───────────────────────────── GAME PAGE ───────────────────────────── */
+        #game .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        #game .turn-indicator {
+            color: #333;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 6px 16px 6px 10px;
+            border-radius: 60px;
+            border: 4px solid #333;
+            box-shadow: 0 4px 0 #333;
+            min-height: 44px;
+        }
+        #game .turn-indicator .dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            border: 2px solid #333;
+        }
+        #game .turn-indicator .dot.x {
+            background: #ff6b6b;
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.6);
+        }
+        #game .turn-indicator .dot.o {
+            background: #48dbfb;
+            box-shadow: 0 0 12px rgba(72, 219, 251, 0.6);
+        }
+        #game .turn-indicator .dot.thinking {
+            animation: pulseGlow 0.8s ease-in-out infinite alternate;
+        }
 
-.edit-btn{
-  background:#f59e0b;
-}
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
 
-.delete-btn{
-  background:#ef4444;
-}
+        #game .score-display {
+            color: #333;
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 6px 14px 6px 10px;
+            border-radius: 60px;
+            border: 4px solid #333;
+            box-shadow: 0 4px 0 #333;
+            min-height: 44px;
+        }
+        #game .score-display .score-x {
+            color: #ff6b6b;
+        }
+        #game .score-display .score-o {
+            color: #48dbfb;
+        }
+        #game .score-display .divider {
+            color: #888;
+        }
 
-@keyframes fade{
-  from{
-    opacity:0;
-    transform:translateY(14px)
-  }
-  to{
-    opacity:1;
-    transform:translateY(0)
-  }
-}
+        /* ──────── WIN BANNER (cartoon style) ──────── */
+        #winBanner {
+            display: none;
+            width: 100%;
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+            border: 4px solid #333;
+            padding: 10px 16px;
+            border-radius: 60px;
+            margin-bottom: 14px;
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 22px;
+            color: #fff;
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            box-shadow: 0 6px 0 #333;
+            text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+            min-height: 48px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #winBanner .highlight-name {
+            color: #fff;
+            text-shadow: 0 3px 0 #c0392b;
+        }
 
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
+        @keyframes popIn {
+            0% {
+                transform: scale(0.3) rotate(-10deg);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.08) rotate(2deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
 
-@media (max-width: 900px){
+        /* ───────────────────────────── BOARD (cartoon) ───────────────────────────── */
+        .board-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-width: 400px;
+            margin: 0 auto 16px;
+            padding: 8px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 40px;
+            border: 6px solid #333;
+            box-shadow: inset 0 0 0 4px #ffb347, 0 8px 0 #333;
+        }
 
-  body{
-    padding:10px;
-  }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+            height: 100%;
+        }
 
-  .grid{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
+        .cell {
+            background: #fff;
+            border-radius: 24px;
+            border: 4px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            color: #333;
+            aspect-ratio: 1 / 1;
+            box-shadow: 0 6px 0 #333;
+            touch-action: manipulation;
+            min-height: 64px;
+            font-family: 'Fredoka One', cursive;
+        }
+        .cell:hover:not(.taken):not(.game-over) {
+            transform: scale(1.04);
+            background: #f9f9f9;
+        }
+        .cell:active:not(.taken):not(.game-over) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #333;
+        }
+        .cell.taken {
+            cursor: default;
+        }
+        .cell.game-over {
+            cursor: default;
+        }
+        .cell .mark {
+            animation: popMark 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .cell .mark.x {
+            color: #ff6b6b;
+            text-shadow: 0 4px 0 #c0392b;
+        }
+        .cell .mark.o {
+            color: #48dbfb;
+            text-shadow: 0 4px 0 #0984e3;
+            font-size: 100px; 
+        }
+        @keyframes popMark {
+            0% {
+                transform: scale(0) rotate(-30deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.3) rotate(5deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
 
-  .left,
-  .right{
-    width:100%;
-  }
+        /* Winning highlight */
+        .cell.win {
+            background: #ffeaa7 !important;
+            border-color: #f39c12 !important;
+            box-shadow: 0 0 0 4px #f39c12, 0 6px 0 #333 !important;
+            animation: winPulse 0.8s ease-in-out infinite alternate;
+        }
+        .cell.win .mark {
+            transform: scale(1.1);
+        }
 
-  .card{
-    padding:14px;
-    border-radius:20px;
-  }
+        @keyframes winPulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.04);
+            }
+        }
 
-  .logo{
-    font-size:2rem;
-    text-align:center;
-    width:100%;
-  }
+        /* ───────────────────────────── GAME MESSAGE ───────────────────────────── */
+        #game-message {
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 20px;
+            min-height: 38px;
+            color: #333;
+            margin-bottom: 14px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 8px;
+        }
+        #game-message.win {
+            color: #ff6b6b;
+        }
+        #game-message.draw {
+            color: #f39c12;
+        }
 
-  .header{
-    flex-direction:column;
-    align-items:center;
-    gap:12px;
-  }
+        /* ───────────────────────────── GAME ACTIONS ───────────────────────────── */
+        .game-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+        .game-actions .btn {
+            flex: 1;
+        }
 
-  .tag{
-    width:100%;
-    text-align:center;
-  }
+        /* ───────────────────────────── WIN MODAL (cartoon pop-up) ───────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
 
-  .stats{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
 
-  .stat{
-    padding:14px;
-  }
+        .modal-card {
+            background: #fff;
+            border: 6px solid #333;
+            border-radius: 60px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: modalPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            box-shadow: 0 12px 0 #333, 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .modal-card::after {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 68px;
+            border: 4px dashed rgba(255, 215, 0, 0.5);
+            pointer-events: none;
+        }
 
-  .stat h3{
-    font-size:1.2rem;
-  }
+        @keyframes modalPop {
+            0% {
+                transform: scale(0.2) rotate(-15deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.06) rotate(2deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
 
-  .row{
-    grid-template-columns:1fr;
-  }
+        .modal-icon {
+            font-size: 72px;
+            margin-bottom: 0px;
+            display: block;
+            animation: floatTrophy 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes floatTrophy {
+            0% {
+                transform: translateY(0) scale(1) rotate(-3deg);
+            }
+            100% {
+                transform: translateY(-12px) scale(1.05) rotate(3deg);
+            }
+        }
 
-  input,
-  select,
-  button{
-    font-size:.95rem;
-    padding:12px;
-  }
+        .modal-card h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 34px;
+            color: #333;
+            margin-bottom: 2px;
+            text-shadow: 0 3px 0 #ddd;
+        }
+        .modal-card .sub-text {
+            font-family: 'Comic Neue', cursive;
+            font-size: 20px;
+            color: #555;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .modal-card .btn {
+            max-width: 200px;
+            margin: 0 auto;
+            min-height: 52px;
+        }
 
-  ul{
-    max-height:none;
-  }
+        /* ───────────────────────────── RESPONSIVE ───────────────────────────── */
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px 14px;
+                border-radius: 40px;
+            }
+            #landing .logo {
+                font-size: 52px;
+            }
+            .board-wrapper {
+                padding: 6px;
+                border-radius: 28px;
+                max-width: 340px;
+            }
+            .board {
+                gap: 6px;
+            }
+            .cell {
+                font-size: 44px;
+                border-radius: 18px;
+                min-height: 56px;
+            }
+            #game .game-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            #game .turn-indicator {
+                justify-content: center;
+                font-size: 16px;
+                min-height: 40px;
+            }
+            #game .score-display {
+                justify-content: center;
+                font-size: 14px;
+                min-height: 40px;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 12px 18px;
+                min-height: 48px;
+            }
+            .btn-sm {
+                min-height: 42px;
+                font-size: 13px;
+            }
+            .mode-btn {
+                font-size: 16px;
+                padding: 12px 16px;
+                min-height: 56px;
+            }
+            .mode-btn .icon {
+                font-size: 24px;
+                width: 40px;
+                height: 40px;
+            }
+            #game-message {
+                font-size: 17px;
+                min-height: 32px;
+            }
+            .game-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            #name-entry .name-title {
+                font-size: 22px;
+            }
+            .name-group input {
+                font-size: 16px;
+                height: 44px;
+            }
+            .name-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            #winBanner {
+                font-size: 18px;
+                padding: 8px 12px;
+                min-height: 40px;
+            }
+            .modal-card {
+                padding: 28px 20px;
+            }
+            .modal-card h2 {
+                font-size: 28px;
+            }
+            .modal-icon {
+                font-size: 56px;
+            }
+            .modal-card .sub-text {
+                font-size: 18px;
+            }
+            #difficulty-page .diff-title {
+                font-size: 24px;
+            }
+            .diff-btn {
+                font-size: 18px;
+                padding: 14px 16px;
+            }
+        }
 
-  li{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-  }
-
-  .actions{
-    width:100%;
-    display:flex;
-    gap:8px;
-  }
-
-  .actions button{
-    flex:1;
-  }
-
-  canvas{
-    width:100% !important;
-    height:auto !important;
-  }
-
-}
-
-/* SMALL PHONES */
-
-@media (max-width: 500px){
-
-  .logo{
-    font-size:1.6rem;
-  }
-
-  .card h2{
-    font-size:1rem;
-  }
-
-  .stat h3{
-    font-size:1rem;
-  }
-
-  .stat p{
-    font-size:.75rem;
-  }
-
-  button{
-    border-radius:12px;
-  }
-
-}
-</style>
+        @media (max-width: 380px) {
+            .card {
+                padding: 16px 10px;
+            }
+            .board {
+                gap: 4px;
+            }
+            .cell {
+                font-size: 34px;
+                border-radius: 14px;
+                min-height: 48px;
+            }
+            #landing .logo {
+                font-size: 40px;
+            }
+            #winBanner {
+                font-size: 16px;
+            }
+            .modal-card {
+                padding: 20px 14px;
+            }
+            .modal-card h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-<div class="header"><div class="logo">FLOWBALANCE</div>
-<div class="tag">Smart Finance Tracker</div>
-</div>
-<div class="grid">
-<div class="left">
-<div class="card">
 
-<h2>Quick Add Transaction</h2>
+    <!-- ─── ANIMATED BACKGROUND DECORATIONS ─── -->
+    <div class="bg-decor">
+        <span>⭐</span>
+        <span>🎈</span>
+        <span>🌈</span>
+        <span>🎉</span>
+        <span>🦄</span>
+        <span>🍭</span>
+        <span>🎪</span>
+    </div>
 
-<input id="quickInput" placeholder="Quick Add Transaction">
-<div class="row">
-   <input id="amount" type="number" placeholder="Amount">
-   <select id="type"><option>Expense</option>
-      <option>Income</option>
-   </select>
-</div>
-<div class="row">
-   <select id="category"></select>
-   <input id="note" placeholder="Note"></div>
-<button onclick="saveTransaction()">+ Save Transaction</button>
-<input id="newCategory" placeholder="Create custom category">
-<button onclick="addCategory()">Add Category</button>
-<button onclick="editCategory()">Edit Selected Category</button>
-<button onclick="deleteCategory()" style="background:#ef4444;margin-bottom:0;">Delete Category</button></div>
-<div class="card"><h2>Recent Transactions</h2>
-   <input id="search" placeholder="Search..." oninput="renderTransactions()"><ul id="transactionList"></ul></div>
-</div>
-<div class="right">
-<div class="card"><h2>Dashboard</h2>
-   <div class="stats">
-  <div class="stat"><p>Balance</p><h3 id="balance">₹0</h3></div>
-  <div class="stat"><p>Income</p><h3 id="incomeVal">₹0</h3></div>
-  <div class="stat"><p>Expense</p><h3 id="expenseVal">₹0</h3></div>
-</div>
+    <!-- ─── APP ─── -->
+    <div id="app">
 
-<div class="stats" style="margin-top:12px">
-  <div class="stat"><p>This Month Income</p><h3 id="monthIncome">₹0</h3></div>
-  <div class="stat"><p>This Month Expense</p><h3 id="monthExpense">₹0</h3></div>
-  <div class="stat"><p>This Month Savings</p><h3 id="monthSavings">₹0</h3></div>
-  <div class="stat"><p>This Year Income</p><h3 id="monthIncome">₹0</h3></div>
-  <div class="stat"><p>This Year Expense</p><h3 id="monthExpense">₹0</h3></div>
-  <div class="stat"><p>This Year Savings</p><h3 id="monthSavings">₹0</h3></div>
-</div>
-</div>
+        <!-- ═══ LANDING PAGE ═══ -->
+        <div id="landing" class="page active card">
+            <div class="logo">✕ ○</div>
+            <div class="subtitle">Tic-Tac-Toe</div>
+            <div class="tagline">🎯 Classic fun with a twist!</div>
 
-</div>
-</div>
-</div>
-<script>
-let categories = JSON.parse(localStorage.getItem('fb_categories')) || ['Food','Transport','Bills','Shopping','Salary','Uncategorized']; let transactions = JSON.parse(localStorage.getItem('fb_transactions')) || [];
-let editIndex = null; let chart;
-function loadCategories(){const c=document.getElementById('category'); c.innerHTML=''; 
-categories.forEach(x=>c.innerHTML += `<option>${x}</option>`);
- localStorage.setItem('fb_categories',JSON.stringify(categories));}
+            <button id="startBtn" class="btn btn-primary">
+                ▶ &nbsp;Start Game
+            </button>
 
-function addCategory(){const v=newCategory.value.trim(); 
-  if(v&&!categories.includes(v)){categories.push(v); 
-    loadCategories(); newCategory.value='';}}
-quickInput.addEventListener('input', function () {
-  const p = this.value.trim().split(' ');
-if(p.length>=2){amount.value=p[0]; 
-  category.value=(p[1].charAt(0).toUpperCase()+p[1].slice(1).toLowerCase());
-   note.value=p.slice(2).join(' ');}});
-   
-   function editCategory() {
-  const selected = category.value;
-  const updated = prompt("Edit category name:", selected);
+            <div id="mode-selection">
+                <button id="localBtn" class="mode-btn">
+                    <span class="icon">👫</span>
+                    <span class="label">
+                        Play with friends
+                        <small>Two players, one device</small>
+                    </span>
+                </button>
+                <button id="aiBtn" class="mode-btn">
+                    <span class="icon">🤖</span>
+                    <span class="label">
+                        Play with AI
+                        <small>Choose your difficulty</small>
+                    </span>
+                </button>
+            </div>
+        </div>
 
-  if (!updated || updated.trim() === "") return;
+        <!-- ═══ NAME ENTRY PAGE ═══ -->
+        <div id="name-entry" class="page card">
+            <div class="name-title">👋 Enter your names</div>
+            <div class="name-sub">Both players, pick your mark</div>
 
-  const newName = updated.trim();
+            <div class="name-group">
+                <label>Player X</label>
+                <div class="input-wrap">
+                    <span class="mark-icon x">✕</span>
+                    <input type="text" id="nameX" placeholder="e.g. Alice" maxlength="20" />
+                </div>
+                <div class="name-error" id="nameXError"></div>
+            </div>
 
-  // update category list
-  categories = categories.map(c => c === selected ? newName : c);
+            <div class="name-group">
+                <label>Player O</label>
+                <div class="input-wrap">
+                    <span class="mark-icon o">○</span>
+                    <input type="text" id="nameO" placeholder="e.g. Bob" maxlength="20" />
+                </div>
+                <div class="name-error" id="nameOError"></div>
+            </div>
 
-  // update old transactions too
-  transactions = transactions.map(t => {
-    if (t.category === selected) {
-      t.category = newName;
-    }
-    return t;
-  });
-  localStorage.setItem('fb_categories', JSON.stringify(categories));
-  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+            <div class="name-actions">
+                <button id="nameBackBtn" class="btn btn-outline btn-sm">← Back</button>
+                <button id="nameStartBtn" class="btn btn-success btn-sm">▶ Start Game</button>
+            </div>
+        </div>
 
-  loadCategories();
-  renderTransactions();
-}
-function deleteCategory() {
-  const selected = category.value;
-   category.value = categories[0];
-  // prevent deleting if only one category left
-  if (categories.length === 1) {
-    alert("At least one category must remain.");
-    return;
-  }
+        <!-- ═══ DIFFICULTY SELECTION PAGE ═══ -->
+        <div id="difficulty-page" class="page card">
+            <div class="diff-title">🤖 Choose Difficulty</div>
+            <div class="diff-sub">How smart should the AI be?</div>
+            <div class="diff-options">
+                <button class="diff-btn easy" data-diff="easy">
+                    <span>😊 Easy</span>
+                    <span class="stars">⭐</span>
+                </button>
+                <button class="diff-btn medium" data-diff="medium">
+                    <span>🤔 Medium</span>
+                    <span class="stars">⭐⭐</span>
+                </button>
+                <button class="diff-btn hard" data-diff="hard">
+                    <span>🧠 Hard</span>
+                    <span class="stars">⭐⭐⭐</span>
+                </button>
+            </div>
+            <button id="diffBackBtn" class="btn btn-outline btn-sm diff-back">← Back</button>
+        </div>
 
-  const confirmDelete = confirm(`Delete "${selected}" category?`);
+        <!-- ═══ GAME PAGE ═══ -->
+        <div id="game" class="page card">
+            <div class="game-header">
+                <div class="turn-indicator">
+                    <span class="dot x" id="turnDot"></span>
+                    <span id="turnText">Your turn</span>
+                </div>
+                <div class="score-display">
+                    <span class="score-x">✕ <span id="scoreX">0</span></span>
+                    <span class="divider">|</span>
+                    <span class="score-o">○ <span id="scoreO">0</span></span>
+                </div>
+            </div>
 
-  if (!confirmDelete) return;
+            <!-- WIN BANNER -->
+            <div id="winBanner">
+                🏆 <span class="highlight-name" id="bannerWinnerName">Player</span> Wins! 🎉
+            </div>
 
-  // remove category from list
-  categories = categories.filter(c => c !== selected);
+            <div class="board-wrapper">
+                <div class="board" id="board">
+                    <div class="cell" data-index="0"></div>
+                    <div class="cell" data-index="1"></div>
+                    <div class="cell" data-index="2"></div>
+                    <div class="cell" data-index="3"></div>
+                    <div class="cell" data-index="4"></div>
+                    <div class="cell" data-index="5"></div>
+                    <div class="cell" data-index="6"></div>
+                    <div class="cell" data-index="7"></div>
+                    <div class="cell" data-index="8"></div>
+                </div>
+            </div>
 
-  // move old transactions to "Uncategorized"
-  transactions = transactions.map(t => {
-    if (t.category === selected) {
-      t.category = "Uncategorized";
-    }
-    return t;
-  });
+            <div id="game-message"></div>
 
-  // ensure Uncategorized exists
-  if (!categories.includes("Uncategorized")) {
-    categories.push("Uncategorized");
-  }
+            <div class="game-actions">
+                <button id="restartBtn" class="btn btn-secondary btn-sm">⟳ Restart</button>
+                <button id="homeBtn" class="btn btn-outline btn-sm">⌂ Home</button>
+            </div>
+        </div>
 
-  localStorage.setItem('fb_categories', JSON.stringify(categories));
-  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+    </div>
 
-  loadCategories();
-  renderTransactions();
-}
+    <!-- ═══ WIN MODAL (POP UP) ═══ -->
+    <div id="winModal" class="modal-overlay">
+        <div class="modal-card">
+            <span class="modal-icon">🏆</span>
+            <h2 id="modalWinnerName">Player</h2>
+            <p class="sub-text">wins the game!</p>
+            <button id="modalPlayAgainBtn" class="btn btn-primary">Play Again</button>
+        </div>
+    </div>
 
-function saveTransaction() {
-  const data = {
-    amount: +amount.value,
-    type: type.value,
-    category: category.value,
-    note: note.value,
-    date: new Date().toLocaleString() // better readable local date
-  };
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  SOUND FX – using Web Audio API (cartoon style)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  if (!data.amount) return;
+        const SoundFX = (() => {
+            let ctx = null;
 
-  if (editIndex !== null) {
-    // keep old date when editing
-    data.date = transactions[editIndex].date;
-    transactions[editIndex] = data;
-    editIndex = null;
-  } else {
-    transactions.unshift(data);
-  }
+            function getContext() {
+                if (!ctx) {
+                    ctx = new(window.AudioContext || window.webkitAudioContext)();
+                }
+                return ctx;
+            }
 
-  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+            function playTone(freq, duration, type = 'sine', volume = 0.15) {
+                try {
+                    const context = getContext();
+                    if (context.state === 'suspended') context.resume();
+                    const osc = context.createOscillator();
+                    const gain = context.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(volume, context.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(context.destination);
+                    osc.start(context.currentTime);
+                    osc.stop(context.currentTime + duration);
+                } catch (e) {}
+            }
 
-  quickInput.value = '';
-  amount.value = '';
-  note.value = '';
+            function playMove() {
+                playTone(700, 0.08, 'sine', 0.12);
+            }
 
-  renderTransactions();
-}
+            function playWin() {
+                // Happy melody: C5, E5, G5, C6, E6
+                const notes = [523, 659, 784, 1047, 1319];
+                notes.forEach((freq, i) => {
+                    setTimeout(() => playTone(freq, 0.15, 'sine', 0.13), i * 100);
+                });
+            }
 
-function editTransaction(i){const t=transactions[i]; amount.value=t.amount; type.value=t.type; category.value=t.category;
-   note.value=t.note; editIndex=i; scrollTo({top:0,behavior:'smooth'});}
+            function playDraw() {
+                playTone(500, 0.2, 'sawtooth', 0.08);
+                setTimeout(() => playTone(400, 0.2, 'sawtooth', 0.08), 200);
+            }
 
-function deleteTransaction(i){transactions.splice(i,1);
-   localStorage.setItem('fb_transactions',JSON.stringify(transactions)); renderTransactions();}
+            function playClick() {
+                playTone(900, 0.05, 'sine', 0.08);
+            }
 
-function renderTransactions()
-{const s=search.value.toLowerCase();
-   transactionList.innerHTML='';
-    let income = 0, expense = 0;
-let monthIncome = 0, monthExpense = 0;
-const currentMonth = new Date().getMonth();
-const currentYear = new Date().getFullYear();
-transactions
-  .map((t, index) => ({ t, index }))
-  .filter(obj => (obj.t.category + ' ' + obj.t.note).toLowerCase().includes(s))
-  .forEach(obj => {transactionList.innerHTML += `<li><div><strong>${obj.t.category}</strong><br><small>${obj.t.note||'No note'} • ${obj.t.date}</small></div><div><b>₹${obj.t.amount}</b><div class='actions'><button class='edit-btn' onclick='editTransaction(${obj.index})'>Edit</button><button class='delete-btn' onclick='deleteTransaction(${obj.index})'>Delete</button></div></div></li>`;
-   obj.t.type === 'Income' ? income += obj.t.amount : expense += obj.t.amount;
+            function resume() {
+                const context = getContext();
+                if (context && context.state === 'suspended') context.resume();
+            }
 
-const txDate = new Date(obj.t.date);
-if (isNaN(txDate)) return;
-if (txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear) {
-  obj.t.type === 'Income'
-    ? monthIncome += obj.t.amount
-    : monthExpense += obj.t.amount;
-}});
- balance.textContent = '₹' + (income - expense);
-incomeVal.textContent = '₹' + income;
-expenseVal.textContent = '₹' + expense;
+            document.addEventListener('click', resume);
+            document.addEventListener('touchstart', resume);
 
-monthIncome.textContent = '₹' + monthIncome;
-monthExpense.textContent = '₹' + monthExpense;
-monthSavings.textContent = '₹' + (monthIncome - monthExpense);
-}
+            return { playMove, playWin, playDraw, playClick, resume };
+        })();
 
-loadCategories();
- renderTransactions();
-</script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  STATE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const state = {
+            mode: null, // 'local' | 'ai'
+            difficulty: 'medium', // 'easy' | 'medium' | 'hard'
+            board: Array(9).fill(null),
+            currentPlayer: 'X',
+            gameOver: false,
+            winner: null,
+            winCombo: null,
+            scoreX: 0,
+            scoreO: 0,
+            isAIThinking: false,
+            playerXName: '',
+            playerOName: '',
+        };
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  DOM REFS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+
+        const landing = $('#landing');
+        const nameEntry = $('#name-entry');
+        const diffPage = $('#difficulty-page');
+        const gamePage = $('#game');
+        const startBtn = $('#startBtn');
+        const modeSelection = $('#mode-selection');
+        const localBtn = $('#localBtn');
+        const aiBtn = $('#aiBtn');
+        const board = $('#board');
+        const cells = $$('.cell');
+        const turnText = $('#turnText');
+        const turnDot = $('#turnDot');
+        const scoreX = $('#scoreX');
+        const scoreO = $('#scoreO');
+        const gameMessage = $('#game-message');
+        const restartBtn = $('#restartBtn');
+        const homeBtn = $('#homeBtn');
+        const nameX = $('#nameX');
+        const nameO = $('#nameO');
+        const nameXError = $('#nameXError');
+        const nameOError = $('#nameOError');
+        const nameBackBtn = $('#nameBackBtn');
+        const nameStartBtn = $('#nameStartBtn');
+        const diffBackBtn = $('#diffBackBtn');
+        const diffBtns = $$('.diff-btn');
+
+        const winBanner = $('#winBanner');
+        const bannerWinnerName = $('#bannerWinnerName');
+        const winModal = $('#winModal');
+        const modalWinnerName = $('#modalWinnerName');
+        const modalPlayAgainBtn = $('#modalPlayAgainBtn');
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  PAGE NAVIGATION
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            void page.offsetWidth;
+            page.classList.add('active');
+        }
+
+        function goHome() {
+            state.mode = null;
+            state.board = Array(9).fill(null);
+            state.currentPlayer = 'X';
+            state.gameOver = false;
+            state.winner = null;
+            state.winCombo = null;
+            state.isAIThinking = false;
+            gameMessage.textContent = '';
+            gameMessage.className = '';
+            hideWinUI();
+            renderBoard();
+            updateTurnUI();
+            showPage(landing);
+            modeSelection.classList.remove('show');
+            startBtn.innerHTML = '▶ &nbsp;Start Game';
+            SoundFX.playClick();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  WIN UI
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function showWinUI(winnerName) {
+            bannerWinnerName.textContent = winnerName;
+            modalWinnerName.textContent = winnerName;
+            winBanner.style.display = 'flex';
+            winModal.classList.add('active');
+        }
+
+        function hideWinUI() {
+            winBanner.style.display = 'none';
+            winModal.classList.remove('active');
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  BOARD RENDER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function renderBoard() {
+            cells.forEach((cell, i) => {
+                const val = state.board[i];
+                cell.innerHTML = val ? `<span class="mark ${val === 'X' ? 'x' : 'o'}">${val === 'X' ? '✕' : '○'}</span>` :
+                    '';
+                cell.classList.toggle('taken', !!val);
+                cell.classList.toggle('game-over', state.gameOver);
+                cell.classList.remove('win');
+            });
+            if (state.winCombo) {
+                state.winCombo.forEach(i => {
+                    cells[i].classList.add('win');
+                });
+            }
+            updateScoreUI();
+        }
+
+        function updateScoreUI() {
+            scoreX.textContent = state.scoreX;
+            scoreO.textContent = state.scoreO;
+        }
+
+        function getCurrentPlayerName() {
+            if (state.mode === 'ai') {
+                return state.currentPlayer === 'X' ? state.playerXName : 'AI';
+            }
+            return state.currentPlayer === 'X' ? state.playerXName : state.playerOName;
+        }
+
+        function updateTurnUI() {
+            if (state.gameOver) return;
+            const isX = state.currentPlayer === 'X';
+            turnDot.className = `dot ${isX ? 'x' : 'o'}`;
+            turnDot.classList.remove('thinking');
+
+            if (state.mode === 'ai' && state.currentPlayer === 'O' && !state.gameOver) {
+                turnText.textContent = 'AI thinking…';
+                turnDot.classList.add('thinking');
+            } else {
+                const name = getCurrentPlayerName();
+                turnText.textContent = `${name}'s turn`;
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  GAME LOGIC
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const WIN_COMBOS = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function checkWinner(board) {
+            for (const combo of WIN_COMBOS) {
+                const [a, b, c] = combo;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return { winner: board[a], combo };
+                }
+            }
+            if (board.every(cell => cell !== null)) {
+                return { winner: 'draw', combo: null };
+            }
+            return { winner: null, combo: null };
+        }
+
+        function makeMove(index) {
+            if (state.gameOver) return false;
+            if (state.board[index] !== null) return false;
+            if (state.mode === 'ai' && state.currentPlayer === 'O' && !state.isAIThinking) return false;
+
+            state.board[index] = state.currentPlayer;
+            renderBoard();
+            SoundFX.playMove();
+
+            const result = checkWinner(state.board);
+            if (result.winner) {
+                state.gameOver = true;
+                state.winner = result.winner;
+                state.winCombo = result.combo;
+                renderBoard();
+                if (result.winner === 'X') state.scoreX++;
+                else if (result.winner === 'O') state.scoreO++;
+                updateScoreUI();
+                showGameOverMessage(result.winner);
+                return true;
+            }
+
+            state.currentPlayer = state.currentPlayer === 'X' ? 'O' : 'X';
+            updateTurnUI();
+
+            if (state.mode === 'ai' && state.currentPlayer === 'O' && !state.gameOver) {
+                triggerAIMove();
+            }
+            return true;
+        }
+
+        function showGameOverMessage(winner) {
+            if (winner === 'draw') {
+                gameMessage.textContent = '🤝 It\'s a draw!';
+                gameMessage.className = 'draw';
+                hideWinUI();
+                SoundFX.playDraw();
+                return;
+            }
+
+            let winnerName = winner === 'X' ? state.playerXName : state.playerOName;
+            if (state.mode === 'ai' && winner === 'O') winnerName = 'AI';
+
+            showWinUI(winnerName);
+            gameMessage.innerHTML = `🏆 <strong>${winnerName}</strong> wins!`;
+            gameMessage.className = 'win';
+            SoundFX.playWin();
+        }
+
+        function resetGame() {
+            state.board = Array(9).fill(null);
+            state.currentPlayer = 'X';
+            state.gameOver = false;
+            state.winner = null;
+            state.winCombo = null;
+            state.isAIThinking = false;
+            gameMessage.textContent = '';
+            gameMessage.className = '';
+            hideWinUI();
+            renderBoard();
+            updateTurnUI();
+            SoundFX.playClick();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  AI (Minimax with difficulty)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function triggerAIMove() {
+            if (state.isAIThinking) return;
+            if (state.gameOver) return;
+            if (state.currentPlayer !== 'O') return;
+            if (state.mode !== 'ai') return;
+
+            state.isAIThinking = true;
+            turnDot.classList.add('thinking');
+            turnText.textContent = 'AI thinking…';
+
+            setTimeout(() => {
+                if (state.gameOver || state.currentPlayer !== 'O') {
+                    state.isAIThinking = false;
+                    turnDot.classList.remove('thinking');
+                    return;
+                }
+                let bestMove = -1;
+                const difficulty = state.difficulty;
+
+                if (difficulty === 'easy') {
+                    // Random move among available
+                    const available = [];
+                    for (let i = 0; i < 9; i++) {
+                        if (state.board[i] === null) available.push(i);
+                    }
+                    if (available.length > 0) {
+                        const randIdx = Math.floor(Math.random() * available.length);
+                        bestMove = available[randIdx];
+                    }
+                } else if (difficulty === 'medium') {
+                    // Minimax with depth limit (3)
+                    bestMove = getBestMoveWithDepth(state.board, 5);
+                } else { // hard
+                    bestMove = getBestMove(state.board);
+                }
+
+                if (bestMove !== -1) {
+                    makeMove(bestMove);
+                }
+                state.isAIThinking = false;
+                turnDot.classList.remove('thinking');
+                if (!state.gameOver) {
+                    updateTurnUI();
+                }
+            }, 450);
+        }
+
+        function getBestMove(board) {
+            let bestScore = -Infinity;
+            let bestMove = -1;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] !== null) continue;
+                const newBoard = [...board];
+                newBoard[i] = 'O';
+                const score = minimax(newBoard, 0, false, -Infinity, Infinity);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+            return bestMove;
+        }
+
+        function getBestMoveWithDepth(board, maxDepth) {
+            let bestScore = -Infinity;
+            let bestMove = -1;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] !== null) continue;
+                const newBoard = [...board];
+                newBoard[i] = 'O';
+                const score = minimaxDepth(newBoard, 0, false, -Infinity, Infinity, maxDepth);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+            return bestMove;
+        }
+
+        function minimax(board, depth, isMaximizing, alpha, beta) {
+            const result = checkWinner(board);
+            if (result.winner === 'O') return 10 - depth;
+            if (result.winner === 'X') return depth - 10;
+            if (result.winner === 'draw') return 0;
+
+            if (isMaximizing) {
+                let maxEval = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] !== null) continue;
+                    const newBoard = [...board];
+                    newBoard[i] = 'O';
+                    const eval_ = minimax(newBoard, depth + 1, false, alpha, beta);
+                    maxEval = Math.max(maxEval, eval_);
+                    alpha = Math.max(alpha, eval_);
+                    if (beta <= alpha) break;
+                }
+                return maxEval;
+            } else {
+                let minEval = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] !== null) continue;
+                    const newBoard = [...board];
+                    newBoard[i] = 'X';
+                    const eval_ = minimax(newBoard, depth + 1, true, alpha, beta);
+                    minEval = Math.min(minEval, eval_);
+                    beta = Math.min(beta, eval_);
+                    if (beta <= alpha) break;
+                }
+                return minEval;
+            }
+        }
+
+        function minimaxDepth(board, depth, isMaximizing, alpha, beta, maxDepth) {
+            const result = checkWinner(board);
+            if (result.winner === 'O') return 10 - depth;
+            if (result.winner === 'X') return depth - 10;
+            if (result.winner === 'draw') return 0;
+            if (depth >= maxDepth) return 0; // evaluation at depth limit
+
+            if (isMaximizing) {
+                let maxEval = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] !== null) continue;
+                    const newBoard = [...board];
+                    newBoard[i] = 'O';
+                    const eval_ = minimaxDepth(newBoard, depth + 1, false, alpha, beta, maxDepth);
+                    maxEval = Math.max(maxEval, eval_);
+                    alpha = Math.max(alpha, eval_);
+                    if (beta <= alpha) break;
+                }
+                return maxEval;
+            } else {
+                let minEval = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] !== null) continue;
+                    const newBoard = [...board];
+                    newBoard[i] = 'X';
+                    const eval_ = minimaxDepth(newBoard, depth + 1, true, alpha, beta, maxDepth);
+                    minEval = Math.min(minEval, eval_);
+                    beta = Math.min(beta, eval_);
+                    if (beta <= alpha) break;
+                }
+                return minEval;
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  NAME ENTRY (mandatory)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function validateNames() {
+            let valid = true;
+            const xName = nameX.value.trim();
+            const oName = nameO.value.trim();
+            nameXError.textContent = '';
+            nameOError.textContent = '';
+            if (!xName) {
+                nameXError.textContent = '⚠️ Please enter a name for Player X';
+                valid = false;
+            }
+            if (!oName) {
+                nameOError.textContent = '⚠️ Please enter a name for Player O';
+                valid = false;
+            }
+            if (xName && oName && xName.toLowerCase() === oName.toLowerCase()) {
+                nameOError.textContent = '⚠️ Names must be different';
+                valid = false;
+            }
+            return valid;
+        }
+
+        function startLocalGame() {
+            if (!validateNames()) return;
+            state.playerXName = nameX.value.trim();
+            state.playerOName = nameO.value.trim();
+            state.mode = 'local';
+            state.scoreX = 0;
+            state.scoreO = 0;
+            resetGame();
+            showPage(gamePage);
+            SoundFX.playClick();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  AI START
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function startAIGame(difficulty) {
+            state.difficulty = difficulty;
+            state.mode = 'ai';
+            state.playerXName = 'You';
+            state.playerOName = 'AI';
+            state.scoreX = 0;
+            state.scoreO = 0;
+            resetGame();
+            showPage(gamePage);
+            SoundFX.playClick();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  EVENT HANDLERS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        startBtn.addEventListener('click', () => {
+            const isOpen = modeSelection.classList.contains('show');
+            modeSelection.classList.toggle('show');
+            startBtn.innerHTML = isOpen ? '▶ &nbsp;Start Game' : '✕ &nbsp;Close';
+            SoundFX.playClick();
+        });
+
+        localBtn.addEventListener('click', () => {
+            showPage(nameEntry);
+            modeSelection.classList.remove('show');
+            startBtn.innerHTML = '▶ &nbsp;Start Game';
+            // Clear default values and errors
+            nameX.value = '';
+            nameO.value = '';
+            nameXError.textContent = '';
+            nameOError.textContent = '';
+            SoundFX.playClick();
+        });
+
+        aiBtn.addEventListener('click', () => {
+            showPage(diffPage);
+            modeSelection.classList.remove('show');
+            startBtn.innerHTML = '▶ &nbsp;Start Game';
+            SoundFX.playClick();
+        });
+
+        nameBackBtn.addEventListener('click', () => {
+            showPage(landing);
+            SoundFX.playClick();
+        });
+
+        nameStartBtn.addEventListener('click', startLocalGame);
+
+        nameX.addEventListener('keydown', (e) => { if (e.key === 'Enter') nameStartBtn.click(); });
+        nameO.addEventListener('keydown', (e) => { if (e.key === 'Enter') nameStartBtn.click(); });
+
+        diffBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const diff = btn.dataset.diff;
+                startAIGame(diff);
+            });
+        });
+
+        diffBackBtn.addEventListener('click', () => {
+            showPage(landing);
+            SoundFX.playClick();
+        });
+
+        cells.forEach((cell) => {
+            cell.addEventListener('click', () => {
+                if (state.mode === 'ai' && state.currentPlayer === 'O') return;
+                if (state.gameOver) return;
+                const index = parseInt(cell.dataset.index);
+                makeMove(index);
+            });
+            cell.addEventListener('touchstart', (e) => {
+                // passive to allow click
+            }, { passive: true });
+        });
+
+        restartBtn.addEventListener('click', resetGame);
+        homeBtn.addEventListener('click', goHome);
+
+        modalPlayAgainBtn.addEventListener('click', () => {
+            hideWinUI();
+            resetGame();
+            SoundFX.playClick();
+        });
+
+        winModal.addEventListener('click', (e) => {
+            if (e.target === winModal) {
+                hideWinUI();
+                resetGame();
+                SoundFX.playClick();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'r' || e.key === 'R') && gamePage.classList.contains('active')) {
+                restartBtn.click();
+            }
+            if (e.key === 'Escape') {
+                if (winModal.classList.contains('active')) {
+                    hideWinUI();
+                    resetGame();
+                } else if (gamePage.classList.contains('active')) {
+                    homeBtn.click();
+                }
+            }
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  INIT
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        showPage(landing);
+        renderBoard();
+        updateTurnUI();
+        hideWinUI();
+        // ensure name inputs are empty
+        nameX.value = '';
+        nameO.value = '';
+
+        console.log('🎮 Cartoon Tic-Tac-Toe loaded!');
+        console.log('📖 Controls: [R] Restart  [Esc] Home / Close Modal');
+        console.log('🔊 Sound effects enabled!');
+    </script>
+
 </body>
 </html>
