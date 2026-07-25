@@ -1,515 +1,648 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FLOWBALANCE</title>
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Inter,system-ui,sans-serif
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLOWBALANCE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Inter, system-ui, sans-serif;
+        }
 
-body{
-  background:radial-gradient(circle at top right,#312e81,#020617 45%,#000);
-  color:#fff;
-  min-height:100vh;
-  padding:18px;
-}
+        body {
+            background: radial-gradient(circle at top right, #312e81, #020617 45%, #000);
+            color: #fff;
+            min-height: 100vh;
+            padding: 18px;
+        }
 
-.app{
-  max-width:1280px;
-  margin:auto;
-}
+        .app {
+            max-width: 1280px;
+            margin: auto;
+        }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:22px;
-  gap:10px;
-  flex-wrap:wrap;
-}
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
 
-.logo{
-  font-size:2.7rem;
-  font-weight:800;
-  letter-spacing:2px;
-  background:linear-gradient(90deg,#67e8f9,#a78bfa,#f472b6);
-  -webkit-background-clip:text;
-  color:transparent;
-}
+        .logo {
+            font-size: 2.7rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #67e8f9, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
 
-.tag{
-  padding:8px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(10px);
-}
+        .tag {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .08);
+            backdrop-filter: blur(10px);
+        }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1.25fr;
-  gap:18px;
-  align-items:start;
-}
-.right{
-  display:grid;
-  gap:14px;
-  width:100%;
-}
-.right .card{
-  height:fit-content;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 18px;
+            align-items: start;
+        }
 
-.card{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  backdrop-filter:blur(14px);
-  border-radius:26px;
-  padding:16px;
-  box-shadow:0 15px 35px rgba(0,0,0,.35);
-  transition:.35s ease;
-  margin-bottom:0;
-}
+        .right {
+            display: grid;
+            gap: 14px;
+            width: 100%;
+        }
 
-.card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(103,232,249,.25);
-}
+        .right .card {
+            height: fit-content;
+        }
 
-.card h2{
-  font-size:1.15rem;
-  margin-bottom:12px;
-  color:#c4b5fd;
-}
+        .card {
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .08);
+            backdrop-filter: blur(14px);
+            border-radius: 26px;
+            padding: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .35);
+            transition: .35s ease;
+            margin-bottom: 0;
+        }
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  margin-bottom:14px;
-}
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(103, 232, 249, .25);
+        }
 
-.stat{
-  padding:18px;
-  border-radius:20px;
-  background:rgba(255,255,255,.05);
-}
+        .card h2 {
+            font-size: 1.15rem;
+            margin-bottom: 12px;
+            color: #c4b5fd;
+        }
 
-.stat p{
-  font-size:.8rem;
-  color:#94a3b8;
-}
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 14px;
+        }
 
-.stat h3{
-  margin-top:6px;
-  font-size:1.35rem;
-}
-input,
-select,
-button{
-  width:100%;
-  padding:13px 14px;
-  border:none;
-  border-radius:14px;
-  margin-top:10px;
-  font-size:.96rem;
-}
+        .stat {
+            padding: 18px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .05);
+        }
 
-input,
-select{
-  background:#0f172a;
-  color:#fff;
-  border:1px solid #334155;
-}
+        .stat p {
+            font-size: .8rem;
+            color: #94a3b8;
+        }
 
-button{
-  background:linear-gradient(90deg,#06b6d4,#8b5cf6);
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 8px 20px rgba(139,92,246,.35);
-  transition:.3s;
-}
+        .stat h3 {
+            margin-top: 6px;
+            font-size: 1.35rem;
+        }
 
-button:hover{
-  transform:translateY(-2px);
-}
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 13px 14px;
+            border: none;
+            border-radius: 14px;
+            margin-top: 10px;
+            font-size: .96rem;
+        }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
+        input,
+        select {
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid #334155;
+        }
 
-ul{
-  list-style:none;
-  max-height:380px;
-  overflow:auto;
-  padding-right:6px;
-}
+        button {
+            background: linear-gradient(90deg, #06b6d4, #8b5cf6);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, .35);
+            transition: .3s;
+        }
 
-li{
-  background:#111827;
-  border:1px solid #1f2937;
-  padding:14px;
-  border-radius:16px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  animation:fade .4s;
-}
+        button:hover {
+            transform: translateY(-2px);
+        }
 
-.actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
-.actions button{
-  width:auto;
-  padding:8px 12px;
-  font-size:.8rem;
-  margin-top:0;
-}
+        ul {
+            list-style: none;
+            max-height: 380px;
+            overflow: auto;
+            padding-right: 6px;
+        }
 
-.edit-btn{
-  background:#f59e0b;
-}
+        li {
+            background: #111827;
+            border: 1px solid #1f2937;
+            padding: 14px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            animation: fade .4s;
+        }
 
-.delete-btn{
-  background:#ef4444;
-}
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
-@keyframes fade{
-  from{
-    opacity:0;
-    transform:translateY(14px)
-  }
-  to{
-    opacity:1;
-    transform:translateY(0)
-  }
-}
+        .actions button {
+            width: auto;
+            padding: 8px 12px;
+            font-size: .8rem;
+            margin-top: 0;
+        }
 
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
+        .edit-btn {
+            background: #f59e0b;
+        }
 
-@media (max-width: 900px){
+        .delete-btn {
+            background: #ef4444;
+        }
 
-  body{
-    padding:10px;
-  }
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
 
-  .grid{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
+        /* =========================
+           MOBILE RESPONSIVE
+        ========================= */
 
-  .left,
-  .right{
-    width:100%;
-  }
+        @media (max-width: 900px) {
+            body {
+                padding: 10px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .left,
+            .right {
+                width: 100%;
+            }
+            .card {
+                padding: 14px;
+                border-radius: 20px;
+            }
+            .logo {
+                font-size: 2rem;
+                text-align: center;
+                width: 100%;
+            }
+            .header {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            .tag {
+                width: 100%;
+                text-align: center;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .stat {
+                padding: 14px;
+            }
+            .stat h3 {
+                font-size: 1.2rem;
+            }
+            .row {
+                grid-template-columns: 1fr;
+            }
+            input,
+            select,
+            button {
+                font-size: .95rem;
+                padding: 12px;
+            }
+            ul {
+                max-height: none;
+            }
+            li {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .actions {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+            }
+            .actions button {
+                flex: 1;
+            }
+            canvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
 
-  .card{
-    padding:14px;
-    border-radius:20px;
-  }
-
-  .logo{
-    font-size:2rem;
-    text-align:center;
-    width:100%;
-  }
-
-  .header{
-    flex-direction:column;
-    align-items:center;
-    gap:12px;
-  }
-
-  .tag{
-    width:100%;
-    text-align:center;
-  }
-
-  .stats{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  .stat{
-    padding:14px;
-  }
-
-  .stat h3{
-    font-size:1.2rem;
-  }
-
-  .row{
-    grid-template-columns:1fr;
-  }
-
-  input,
-  select,
-  button{
-    font-size:.95rem;
-    padding:12px;
-  }
-
-  ul{
-    max-height:none;
-  }
-
-  li{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-  }
-
-  .actions{
-    width:100%;
-    display:flex;
-    gap:8px;
-  }
-
-  .actions button{
-    flex:1;
-  }
-
-  canvas{
-    width:100% !important;
-    height:auto !important;
-  }
-
-}
-
-/* SMALL PHONES */
-
-@media (max-width: 500px){
-
-  .logo{
-    font-size:1.6rem;
-  }
-
-  .card h2{
-    font-size:1rem;
-  }
-
-  .stat h3{
-    font-size:1rem;
-  }
-
-  .stat p{
-    font-size:.75rem;
-  }
-
-  button{
-    border-radius:12px;
-  }
-
-}
-</style>
+        @media (max-width: 500px) {
+            .logo {
+                font-size: 1.6rem;
+            }
+            .card h2 {
+                font-size: 1rem;
+            }
+            .stat h3 {
+                font-size: 1rem;
+            }
+            .stat p {
+                font-size: .75rem;
+            }
+            button {
+                border-radius: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-<div class="header"><div class="logo">FLOWBALANCE</div>
-<div class="tag">Smart Finance Tracker</div>
-</div>
-<div class="grid">
-<div class="left">
-<div class="card">
+    <div class="app">
+        <div class="header">
+            <div class="logo">FLOWBALANCE</div>
+            <div class="tag">Smart Finance Tracker</div>
+        </div>
+        <div class="grid">
+            <!-- LEFT COLUMN -->
+            <div class="left">
+                <div class="card">
+                    <h2>Quick Add Transaction</h2>
+                    <input id="quickInput" placeholder="e.g. 1500 Food lunch">
+                    <div class="row">
+                        <input id="amount" type="number" placeholder="Amount">
+                        <select id="type">
+                            <option>Expense</option>
+                            <option>Income</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <select id="category"></select>
+                        <input id="note" placeholder="Note">
+                    </div>
+                    <button onclick="saveTransaction()">+ Save Transaction</button>
 
-<h2>Quick Add Transaction</h2>
+                    <hr style="border-color:#334155;margin:16px 0;">
 
-<input id="quickInput" placeholder="Quick Add Transaction">
-<div class="row">
-   <input id="amount" type="number" placeholder="Amount">
-   <select id="type"><option>Expense</option>
-      <option>Income</option>
-   </select>
-</div>
-<div class="row">
-   <select id="category"></select>
-   <input id="note" placeholder="Note"></div>
-<button onclick="saveTransaction()">+ Save Transaction</button>
-<input id="newCategory" placeholder="Create custom category">
-<button onclick="addCategory()">Add Category</button>
-<button onclick="editCategory()">Edit Selected Category</button>
-<button onclick="deleteCategory()" style="background:#ef4444;margin-bottom:0;">Delete Category</button></div>
-<div class="card"><h2>Recent Transactions</h2>
-   <input id="search" placeholder="Search..." oninput="renderTransactions()"><ul id="transactionList"></ul></div>
-</div>
-<div class="right">
-<div class="card"><h2>Dashboard</h2>
-   <div class="stats">
-  <div class="stat"><p>Balance</p><h3 id="balance">₹0</h3></div>
-  <div class="stat"><p>Income</p><h3 id="incomeVal">₹0</h3></div>
-  <div class="stat"><p>Expense</p><h3 id="expenseVal">₹0</h3></div>
-</div>
+                    <input id="newCategory" placeholder="Create custom category">
+                    <button onclick="addCategory()">Add Category</button>
+                    <button onclick="editCategory()">Edit Selected Category</button>
+                    <button onclick="deleteCategory()" style="background:#ef4444;margin-bottom:0;">Delete Category</button>
+                </div>
 
-<div class="stats" style="margin-top:12px">
-  <div class="stat"><p>This Month Income</p><h3 id="monthIncome">₹0</h3></div>
-  <div class="stat"><p>This Month Expense</p><h3 id="monthExpense">₹0</h3></div>
-  <div class="stat"><p>This Month Savings</p><h3 id="monthSavings">₹0</h3></div>
-  <div class="stat"><p>This Year Income</p><h3 id="monthIncome">₹0</h3></div>
-  <div class="stat"><p>This Year Expense</p><h3 id="monthExpense">₹0</h3></div>
-  <div class="stat"><p>This Year Savings</p><h3 id="monthSavings">₹0</h3></div>
-</div>
-</div>
+                <div class="card">
+                    <h2>Recent Transactions</h2>
+                    <input id="search" placeholder="Search..." oninput="renderTransactions()">
+                    <ul id="transactionList"></ul>
+                </div>
+            </div>
 
-</div>
-</div>
-</div>
-<script>
-let categories = JSON.parse(localStorage.getItem('fb_categories')) || ['Food','Transport','Bills','Shopping','Salary','Uncategorized']; let transactions = JSON.parse(localStorage.getItem('fb_transactions')) || [];
-let editIndex = null; let chart;
-function loadCategories(){const c=document.getElementById('category'); c.innerHTML=''; 
-categories.forEach(x=>c.innerHTML += `<option>${x}</option>`);
- localStorage.setItem('fb_categories',JSON.stringify(categories));}
+            <!-- RIGHT COLUMN -->
+            <div class="right">
+                <div class="card">
+                    <h2>Dashboard</h2>
+                    <div class="stats">
+                        <div class="stat"><p>Balance</p><h3 id="balance">₹0</h3></div>
+                        <div class="stat"><p>Income</p><h3 id="incomeVal">₹0</h3></div>
+                        <div class="stat"><p>Expense</p><h3 id="expenseVal">₹0</h3></div>
+                    </div>
 
-function addCategory(){const v=newCategory.value.trim(); 
-  if(v&&!categories.includes(v)){categories.push(v); 
-    loadCategories(); newCategory.value='';}}
-quickInput.addEventListener('input', function () {
-  const p = this.value.trim().split(' ');
-if(p.length>=2){amount.value=p[0]; 
-  category.value=(p[1].charAt(0).toUpperCase()+p[1].slice(1).toLowerCase());
-   note.value=p.slice(2).join(' ');}});
-   
-   function editCategory() {
-  const selected = category.value;
-  const updated = prompt("Edit category name:", selected);
+                    <div class="stats" style="margin-top:12px">
+                        <div class="stat"><p>This Month Income</p><h3 id="monthIncome">₹0</h3></div>
+                        <div class="stat"><p>This Month Expense</p><h3 id="monthExpense">₹0</h3></div>
+                        <div class="stat"><p>This Month Savings</p><h3 id="monthSavings">₹0</h3></div>
+                        <div class="stat"><p>This Year Income</p><h3 id="yearIncome">₹0</h3></div>
+                        <div class="stat"><p>This Year Expense</p><h3 id="yearExpense">₹0</h3></div>
+                        <div class="stat"><p>This Year Savings</p><h3 id="yearSavings">₹0</h3></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  if (!updated || updated.trim() === "") return;
+    <script>
+        // ─── STATE ──────────────────────────────────────────────────────────────
+        let categories = JSON.parse(localStorage.getItem('fb_categories')) ||
+            ['Food', 'Transport', 'Bills', 'Shopping', 'Salary', 'Uncategorized'];
+        let transactions = JSON.parse(localStorage.getItem('fb_transactions')) || [];
+        let editIndex = null;
 
-  const newName = updated.trim();
+        // ─── DOM REFS ───────────────────────────────────────────────────────────
+        const $ = id => document.getElementById(id);
+        const quickInput = $('quickInput');
+        const amount = $('amount');
+        const type = $('type');
+        const category = $('category');
+        const note = $('note');
+        const newCategory = $('newCategory');
+        const search = $('search');
+        const transactionList = $('transactionList');
+        const balance = $('balance');
+        const incomeVal = $('incomeVal');
+        const expenseVal = $('expenseVal');
+        const monthIncome = $('monthIncome');
+        const monthExpense = $('monthExpense');
+        const monthSavings = $('monthSavings');
+        const yearIncome = $('yearIncome');
+        const yearExpense = $('yearExpense');
+        const yearSavings = $('yearSavings');
 
-  // update category list
-  categories = categories.map(c => c === selected ? newName : c);
+        // ─── HELPERS ────────────────────────────────────────────────────────────
+        function formatDate(iso) {
+            if (!iso) return '—';
+            try {
+                return new Date(iso).toLocaleString();
+            } catch (_) { return iso; }
+        }
 
-  // update old transactions too
-  transactions = transactions.map(t => {
-    if (t.category === selected) {
-      t.category = newName;
-    }
-    return t;
-  });
-  localStorage.setItem('fb_categories', JSON.stringify(categories));
-  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+        function getMonth(tx) {
+            try { return new Date(tx.date).getMonth(); } catch (_) { return -1; }
+        }
 
-  loadCategories();
-  renderTransactions();
-}
-function deleteCategory() {
-  const selected = category.value;
-   category.value = categories[0];
-  // prevent deleting if only one category left
-  if (categories.length === 1) {
-    alert("At least one category must remain.");
-    return;
-  }
+        function getYear(tx) {
+            try { return new Date(tx.date).getFullYear(); } catch (_) { return -1; }
+        }
 
-  const confirmDelete = confirm(`Delete "${selected}" category?`);
+        function getCategoryList() {
+            return categories;
+        }
 
-  if (!confirmDelete) return;
+        function saveCategories() {
+            localStorage.setItem('fb_categories', JSON.stringify(categories));
+        }
 
-  // remove category from list
-  categories = categories.filter(c => c !== selected);
+        function saveTransactions() {
+            localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+        }
 
-  // move old transactions to "Uncategorized"
-  transactions = transactions.map(t => {
-    if (t.category === selected) {
-      t.category = "Uncategorized";
-    }
-    return t;
-  });
+        // ─── CATEGORY UI ────────────────────────────────────────────────────────
+        function loadCategories() {
+            const c = category;
+            const prev = c.value;
+            c.innerHTML = '';
+            categories.forEach(x => {
+                const opt = document.createElement('option');
+                opt.value = x;
+                opt.textContent = x;
+                c.appendChild(opt);
+            });
+            if (categories.includes(prev)) c.value = prev;
+            saveCategories();
+        }
 
-  // ensure Uncategorized exists
-  if (!categories.includes("Uncategorized")) {
-    categories.push("Uncategorized");
-  }
+        function addCategory() {
+            const v = newCategory.value.trim();
+            if (!v) return;
+            if (categories.includes(v)) {
+                alert('Category already exists.');
+                return;
+            }
+            categories.push(v);
+            loadCategories();
+            category.value = v;
+            newCategory.value = '';
+        }
 
-  localStorage.setItem('fb_categories', JSON.stringify(categories));
-  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+        function editCategory() {
+            const selected = category.value;
+            if (!selected) return;
+            const updated = prompt('Edit category name:', selected);
+            if (updated === null || updated.trim() === '') return;
+            const newName = updated.trim();
+            if (newName === selected) return;
+            if (categories.includes(newName)) {
+                alert('A category with that name already exists.');
+                return;
+            }
+            // update category list
+            const idx = categories.indexOf(selected);
+            if (idx !== -1) categories[idx] = newName;
+            // update transactions
+            transactions = transactions.map(t => {
+                if (t.category === selected) t.category = newName;
+                return t;
+            });
+            saveCategories();
+            saveTransactions();
+            loadCategories();
+            category.value = newName;
+            renderTransactions();
+        }
 
-  loadCategories();
-  renderTransactions();
-}
+        function deleteCategory() {
+            const selected = category.value;
+            if (!selected) return;
+            if (categories.length <= 1) {
+                alert('At least one category must remain.');
+                return;
+            }
+            if (!confirm(`Delete "${selected}" category?`)) return;
+            // remove from list
+            categories = categories.filter(c => c !== selected);
+            // re-assign transactions to 'Uncategorized'
+            if (!categories.includes('Uncategorized')) categories.push('Uncategorized');
+            transactions = transactions.map(t => {
+                if (t.category === selected) t.category = 'Uncategorized';
+                return t;
+            });
+            saveCategories();
+            saveTransactions();
+            loadCategories();
+            category.value = 'Uncategorized';
+            renderTransactions();
+        }
 
-function saveTransaction() {
-  const data = {
-    amount: +amount.value,
-    type: type.value,
-    category: category.value,
-    note: note.value,
-    date: new Date().toLocaleString() // better readable local date
-  };
+        // ─── QUICK INPUT PARSER ────────────────────────────────────────────────
+        quickInput.addEventListener('input', function() {
+            const raw = this.value.trim();
+            if (!raw) return;
+            const parts = raw.split(/\s+/);
+            if (parts.length < 2) return;
+            // first token = amount
+            const amt = parseFloat(parts[0]);
+            if (isNaN(amt) || amt <= 0) return;
+            amount.value = amt;
+            // second token = category (capitalize)
+            const cat = parts[1].charAt(0).toUpperCase() + parts[1].slice(1).toLowerCase();
+            // if category doesn't exist, add it
+            if (!categories.includes(cat)) {
+                categories.push(cat);
+                loadCategories();
+            }
+            category.value = cat;
+            // rest = note
+            if (parts.length > 2) {
+                note.value = parts.slice(2).join(' ');
+            } else {
+                note.value = '';
+            }
+        });
 
-  if (!data.amount) return;
+        // ─── SAVE / EDIT / DELETE ─────────────────────────────────────────────
+        function saveTransaction() {
+            const amt = parseFloat(amount.value);
+            if (!amt || amt <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+            const data = {
+                amount: amt,
+                type: type.value,
+                category: category.value || 'Uncategorized',
+                note: note.value.trim() || '',
+                date: new Date().toISOString()
+            };
 
-  if (editIndex !== null) {
-    // keep old date when editing
-    data.date = transactions[editIndex].date;
-    transactions[editIndex] = data;
-    editIndex = null;
-  } else {
-    transactions.unshift(data);
-  }
+            if (editIndex !== null) {
+                // keep original date when editing
+                data.date = transactions[editIndex].date;
+                transactions[editIndex] = data;
+                editIndex = null;
+            } else {
+                transactions.unshift(data);
+            }
 
-  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+            saveTransactions();
+            quickInput.value = '';
+            amount.value = '';
+            note.value = '';
+            // reset category to first
+            if (categories.length) category.value = categories[0];
+            renderTransactions();
+        }
 
-  quickInput.value = '';
-  amount.value = '';
-  note.value = '';
+        function editTransaction(i) {
+            const t = transactions[i];
+            amount.value = t.amount;
+            type.value = t.type;
+            category.value = t.category;
+            note.value = t.note;
+            editIndex = i;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            quickInput.focus();
+        }
 
-  renderTransactions();
-}
+        function deleteTransaction(i) {
+            if (!confirm('Delete this transaction?')) return;
+            transactions.splice(i, 1);
+            saveTransactions();
+            renderTransactions();
+        }
 
-function editTransaction(i){const t=transactions[i]; amount.value=t.amount; type.value=t.type; category.value=t.category;
-   note.value=t.note; editIndex=i; scrollTo({top:0,behavior:'smooth'});}
+        // ─── RENDER ─────────────────────────────────────────────────────────────
+        function renderTransactions() {
+            const q = search.value.toLowerCase().trim();
+            transactionList.innerHTML = '';
 
-function deleteTransaction(i){transactions.splice(i,1);
-   localStorage.setItem('fb_transactions',JSON.stringify(transactions)); renderTransactions();}
+            let totalIncome = 0,
+                totalExpense = 0;
+            let monthIncomeVal = 0,
+                monthExpenseVal = 0;
+            let yearIncomeVal = 0,
+                yearExpenseVal = 0;
 
-function renderTransactions()
-{const s=search.value.toLowerCase();
-   transactionList.innerHTML='';
-    let income = 0, expense = 0;
-let monthIncome = 0, monthExpense = 0;
-const currentMonth = new Date().getMonth();
-const currentYear = new Date().getFullYear();
-transactions
-  .map((t, index) => ({ t, index }))
-  .filter(obj => (obj.t.category + ' ' + obj.t.note).toLowerCase().includes(s))
-  .forEach(obj => {transactionList.innerHTML += `<li><div><strong>${obj.t.category}</strong><br><small>${obj.t.note||'No note'} • ${obj.t.date}</small></div><div><b>₹${obj.t.amount}</b><div class='actions'><button class='edit-btn' onclick='editTransaction(${obj.index})'>Edit</button><button class='delete-btn' onclick='deleteTransaction(${obj.index})'>Delete</button></div></div></li>`;
-   obj.t.type === 'Income' ? income += obj.t.amount : expense += obj.t.amount;
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
 
-const txDate = new Date(obj.t.date);
-if (isNaN(txDate)) return;
-if (txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear) {
-  obj.t.type === 'Income'
-    ? monthIncome += obj.t.amount
-    : monthExpense += obj.t.amount;
-}});
- balance.textContent = '₹' + (income - expense);
-incomeVal.textContent = '₹' + income;
-expenseVal.textContent = '₹' + expense;
+            transactions.forEach((t, idx) => {
+                const label = (t.category + ' ' + t.note).toLowerCase();
+                if (q && !label.includes(q)) return;
 
-monthIncome.textContent = '₹' + monthIncome;
-monthExpense.textContent = '₹' + monthExpense;
-monthSavings.textContent = '₹' + (monthIncome - monthExpense);
- }
+                const amt = t.amount || 0;
+                const isIncome = t.type === 'Income';
+                if (isIncome) totalIncome += amt;
+                else totalExpense += amt;
 
-loadCategories();
- renderTransactions();
-</script>
+                // month
+                const m = getMonth(t);
+                const y = getYear(t);
+                if (m === currentMonth && y === currentYear) {
+                    if (isIncome) monthIncomeVal += amt;
+                    else monthExpenseVal += amt;
+                }
+                // year
+                if (y === currentYear) {
+                    if (isIncome) yearIncomeVal += amt;
+                    else yearExpenseVal += amt;
+                }
+
+                // render row
+                const li = document.createElement('li');
+                li.innerHTML = `
+              <div>
+                <strong>${t.category}</strong>
+                <br><small>${t.note || 'No note'} • ${formatDate(t.date)}</small>
+              </div>
+              <div>
+                <b>₹${amt}</b>
+                <div class="actions">
+                  <button class="edit-btn" onclick="editTransaction(${idx})">Edit</button>
+                  <button class="delete-btn" onclick="deleteTransaction(${idx})">Delete</button>
+                </div>
+              </div>
+            `;
+                transactionList.appendChild(li);
+            });
+
+            // update dashboard
+            balance.textContent = '₹' + (totalIncome - totalExpense);
+            incomeVal.textContent = '₹' + totalIncome;
+            expenseVal.textContent = '₹' + totalExpense;
+            monthIncome.textContent = '₹' + monthIncomeVal;
+            monthExpense.textContent = '₹' + monthExpenseVal;
+            monthSavings.textContent = '₹' + (monthIncomeVal - monthExpenseVal);
+            yearIncome.textContent = '₹' + yearIncomeVal;
+            yearExpense.textContent = '₹' + yearExpenseVal;
+            yearSavings.textContent = '₹' + (yearIncomeVal - yearExpenseVal);
+        }
+
+        // ─── INIT ──────────────────────────────────────────────────────────────
+        loadCategories();
+        renderTransactions();
+
+        // auto-save when leaving page
+        window.addEventListener('beforeunload', () => {
+            saveCategories();
+            saveTransactions();
+        });
+    </script>
 </body>
 </html>
